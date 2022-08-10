@@ -1,57 +1,24 @@
-# Project Name
+# Managed Identity POC
 
-(short, 1-3 sentenced, description of the project)
+Small proof of concept to showcase a .NET 5 application running on App Service connecting to an Azure SQL database using Managed Identities.
 
-## Features
+## Setup
 
-This project framework provides the following features:
+Create an Azure SQL database and an Azure App Service.
 
-* Feature 1
-* Feature 2
-* ...
+If you would like to use User-Assigned Managed identities then search for "Managed Identities" in the Azure Portal and create a new User-Assigned Identity Managed Identity.
+Then go in the "Identity" section of your Azure Web App and click on the User-Assigned tab and select your newly created User-Assigned Identity.
 
-## Getting Started
+If you would rather use System-Assigned managed identities then open up the "Identity" section in your Azure Web App and turn on the option for System-Assigned Identities.
 
-### Prerequisites
+You will also have to go to the Access Control (IAM) settings of your Azure SQL server to add a role assignment with proper permissions for the newly created Managed Identity.
 
-(ideally very short, if any)
+Open appsettings.json and change the placeholders with the information for your newly created Azure SQL database. If using User-Assigned identity then you will need to specify the Client ID of the identity in the User ID part of the connection string. If you are using System Assigned Managed Identity then just remove the User Id section althogether as App Service will pickup the proper identity information automatically.
 
-- OS
-- Library version
-- ...
+Run the Entity Framework Core migration to setup your database.
 
-### Installation
+Publish the webapp to App Service and it should work and use Managed Identities.
 
-(ideally very short)
+If you want to push things a bit further and integrate Private Endpoints then create a Virtual Network with two subnets. Open up the networking settings of your Azure SQL database server and turn off public access and turn on private access and specify your newly created vnet and subnet.
 
-- npm install [package name]
-- mvn install
-- ...
-
-### Quickstart
-(Add steps to get up and running quickly)
-
-1. git clone [repository clone url]
-2. cd [respository name]
-3. ...
-
-
-## Demo
-
-A demo app is included to show how to use the project.
-
-To run the demo, follow these steps:
-
-(Add steps to start up the demo)
-
-1.
-2.
-3.
-
-## Resources
-
-(Any additional resources or related projects)
-
-- Link to supporting information
-- Link to similar sample
-- ...
+Then, open up the networking settings of your Azure App Service and turn on vnet integration and specify the second subnet you created. No further code changes are needed and the database should now only be accessible when the code is running on Azure App Service.
